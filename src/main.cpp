@@ -133,8 +133,14 @@ void loop()
       Serial.printf("instruction: %d\n", hproject.instruction);
       Serial.printf("components: %d\n", hproject.components);
       Serial.printf("images: %d\n", hproject.images);
-      Serial.printf("created: %ld\n", hproject.created);
-      Serial.printf("updated: %ld\n", hproject.updated);
+      struct tm *timeinfo;
+      char buffer[80];
+      timeinfo = localtime(&(hproject.created));
+      strftime(buffer, 80, "%F %T", timeinfo);
+      Serial.printf("created: %s\n", buffer);
+      timeinfo = localtime(&(hproject.updated));
+      strftime(buffer, 80, "%F %T", timeinfo);
+      Serial.printf("updated: %s\n", buffer);
       Serial.printf("tags (count): %d\n", hproject.tags_count);
     }
     else

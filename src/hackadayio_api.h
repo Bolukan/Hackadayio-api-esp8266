@@ -50,8 +50,8 @@ public:
         int instruction;
         int components;
         int images;
-        long created;
-        long updated;
+        time_t created;
+        time_t updated;
         int tags_count;
         // char** tags;
     };

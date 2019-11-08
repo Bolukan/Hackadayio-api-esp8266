@@ -79,8 +79,8 @@ HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
         hproject.instruction = doc["instruction"].as<int>();
         hproject.components = doc["components"].as<int>();
         hproject.images = doc["images"].as<int>();
-        hproject.created = doc["created"].as<long>();
-        hproject.updated = doc["updated"].as<long>();
+        hproject.created = doc["created"].as<time_t>();
+        hproject.updated = doc["updated"].as<time_t>();
         hproject.tags_count = doc["tags"].size();
     }
     _client->stop();
