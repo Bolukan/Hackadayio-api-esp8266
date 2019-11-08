@@ -13,11 +13,12 @@
 #include <time.h>             // Arduino library - Secure connections need the right time to know validity of certificate.
 
 #include "ca_certificate.h"
-#include "secrets.h" // Uncomment this line and add secrets.h to your project
+// #include "secrets.h" // Uncomment this line and add secrets.h to your project
 #ifndef SECRETS_H
 #define SECRETS_H
-const char WIFI_SSID[] = "ssid";
-const char WIFI_PASSWORD[] = "password";
+const char WIFI_SSID2[] = "ssid";
+const char WIFI_PASSWORD2[] = "password";
+const char HACKADAYIO_API_KEY[] = "1234567890123456";
 #endif
 
 // ***********************************  CONSTANTS  *****************************
@@ -27,10 +28,6 @@ static const int TIME_TIMEZONE_NL = 3600;
 static const int TIME_DAYLIGHTOFFSET_SEC_NL = 3600;
 static const char TIME_NTPSERVER_1[] = "nl.pool.ntp.org";
 static const char TIME_NTPSERVER_2[] = "pool.ntp.org";
-
-// site
-const char HACKADAYIO_HOST[] = "api.hackaday.io";
-const uint16_t HACKADAYIO_PORT = 443;
 
 // ***********************************  VARIABLES  *****************************
 
@@ -105,7 +102,7 @@ void loop()
   gmtime_r(&now, &timeinfo);
 
   // time set and not same <hour> as last time
-  if ((now > 24 * 3600) & (minutes_startloop != timeinfo.tm_hour))
+  if ((now > 24 * 3600) && (minutes_startloop != timeinfo.tm_hour))
   {
     minutes_startloop = timeinfo.tm_hour;
 
@@ -113,8 +110,24 @@ void loop()
     HackadayioApi api(client, HACKADAYIO_API_KEY);
     HackadayioApi::HProject hproject = api.GetProject(163680);
     if (!hproject.api_error) {
+      Serial.printf("id: %d\n", hproject.id);
+      Serial.printf("url: %s\n", hproject.url);
+      Serial.printf("owner_id: %d\n", hproject.owner_id);
+      Serial.printf("name: %s\n", hproject.name);
+      Serial.printf("summary: %s\n", hproject.summary);
       Serial.printf("description: %s\n", hproject.description);
+      Serial.printf("image_url: %s\n", hproject.image_url);
       Serial.printf("views: %d\n", hproject.views);
+      Serial.printf("comments: %d\n", hproject.comments);
+      Serial.printf("followers: %d\n", hproject.followers);
+      Serial.printf("skulls: %d\n", hproject.skulls);
+      Serial.printf("logs: %d\n", hproject.logs);
+      Serial.printf("details: %d\n", hproject.details);
+      Serial.printf("instruction: %d\n", hproject.instruction);
+      Serial.printf("components: %d\n", hproject.components);
+      Serial.printf("images: %d\n", hproject.images);
+      Serial.printf("created: %ld\n", hproject.created);
+      Serial.printf("updated: %ld\n", hproject.updated);
     } else {
       Serial.printf("Error : %d\n", hproject.api_error);
     }
