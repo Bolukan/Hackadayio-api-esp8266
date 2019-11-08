@@ -3,8 +3,9 @@
 #endif
 
 #define COMPDATE __DATE__ __TIME__
-#define APPNAME "Hackaday.io api"
-#define VERSION "V0.0.1"
+#define APPNAME "Hackaday.io api for esp8266"
+#define VERSION "V0.0.2"
+#define WIFI_DEBUG 0
 
 #include <Arduino.h>
 #include <hackadayio_api.h>
@@ -41,34 +42,39 @@ int minutes_startloop;
 
 void onSTAConnected(WiFiEventStationModeConnected e /*String ssid, uint8 bssid[6], uint8 channel*/)
 {
+#if (WIFI_DEBUG == 1)
   Serial.printf("WiFi Connected: SSID %s @ BSSID %.2X:%.2X:%.2X:%.2X:%.2X:%.2X Channel %d\n",
                 e.ssid.c_str(), e.bssid[0], e.bssid[1], e.bssid[2], e.bssid[3], e.bssid[4], e.bssid[5], e.channel);
   Serial.print("Get IP from ");
   Serial.println(e.ssid.c_str());
+#endif
 }
 
 void onSTADisconnected(WiFiEventStationModeDisconnected e /*String ssid, uint8 bssid[6], WiFiDisconnectReason reason*/)
 {
+#if (WIFI_DEBUG == 1)
   Serial.printf("WiFi Disconnected: SSID %s BSSID %.2X:%.2X:%.2X:%.2X:%.2X:%.2X Reason %d\n",
                 e.ssid.c_str(), e.bssid[0], e.bssid[1], e.bssid[2], e.bssid[3], e.bssid[4], e.bssid[5], e.reason);
   // Reason: https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFiType.h
   Serial.print("ERROR ");
   Serial.println(e.ssid.c_str());
+#endif
 }
 
 void onSTAGotIP(WiFiEventStationModeGotIP e /*IPAddress ip, IPAddress mask, IPAddress gw*/)
 {
+#if (WIFI_DEBUG == 1)
   Serial.printf("WiFi GotIP: localIP %s SubnetMask %s GatewayIP %s\n",
                 e.ip.toString().c_str(), e.mask.toString().c_str(), e.gw.toString().c_str());
   Serial.print("Got IP");
   Serial.println(e.ip.toString().c_str());
+#endif
 }
 
 // ***********************************  SETUP  *********************************
 
 void setup()
 {
-
   Serial.begin(115200);
   Serial.println();
 
@@ -109,7 +115,8 @@ void loop()
     BearSSL::WiFiClientSecure client;
     HackadayioApi api(client, HACKADAYIO_API_KEY);
     HackadayioApi::HProject hproject = api.GetProject(163680);
-    if (!hproject.api_error) {
+    if (!hproject.api_error)
+    {
       Serial.printf("id: %d\n", hproject.id);
       Serial.printf("url: %s\n", hproject.url);
       Serial.printf("owner_id: %d\n", hproject.owner_id);
@@ -128,9 +135,10 @@ void loop()
       Serial.printf("images: %d\n", hproject.images);
       Serial.printf("created: %ld\n", hproject.created);
       Serial.printf("updated: %ld\n", hproject.updated);
-    } else {
+    }
+    else
+    {
       Serial.printf("Error : %d\n", hproject.api_error);
     }
-
   }
 }
