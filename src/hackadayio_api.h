@@ -35,12 +35,12 @@ public:
     {
         API_Error api_error;
         int id;
-        char *url;
+        const char *url;
         int owner_id;
-        char *name;
-        char *summary;
-        char *description;
-        char *image_url;
+        const char *name;
+        const char *summary;
+        const char *description;
+        const char *image_url;
         int views;
         int comments;
         int followers;

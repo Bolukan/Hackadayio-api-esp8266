@@ -64,12 +64,12 @@ HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
     {
         hproject.api_error = API_Error_None;
         hproject.id = doc["id"].as<int>();
-        hproject.url = (char *)doc["url"].as<char *>();
+        hproject.url = doc["url"].as<char *>();
         hproject.owner_id = doc["owner_id"].as<int>();
-        hproject.name = (char *)doc["name"].as<char *>();
-        hproject.summary = (char *)doc["summary"].as<char *>();
-        hproject.description = (char *)doc["description"].as<char *>();
-        hproject.image_url = (char *)doc["image_url"].as<char *>();
+        hproject.name = doc["name"].as<char *>();
+        hproject.summary = doc["summary"].as<char *>();
+        hproject.description = doc["description"].as<char *>();
+        hproject.image_url = doc["image_url"].as<char *>();
         hproject.views = doc["views"].as<int>();
         hproject.comments = doc["comments"].as<int>();
         hproject.followers = doc["followers"].as<int>();
@@ -81,7 +81,7 @@ HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
         hproject.images = doc["images"].as<int>();
         hproject.created = doc["created"].as<long>();
         hproject.updated = doc["updated"].as<long>();
-        hproject.tags_count = 0; // doc["tags"].size();
+        hproject.tags_count = doc["tags"].size();
     }
     _client->stop();
     return hproject;

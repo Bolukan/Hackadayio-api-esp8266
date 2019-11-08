@@ -135,6 +135,7 @@ void loop()
       Serial.printf("images: %d\n", hproject.images);
       Serial.printf("created: %ld\n", hproject.created);
       Serial.printf("updated: %ld\n", hproject.updated);
+      Serial.printf("tags (count): %d\n", hproject.tags_count);
     }
     else
     {
