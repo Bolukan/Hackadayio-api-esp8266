@@ -92,7 +92,7 @@ HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
  */
 HackadayioApi::API_Error HackadayioApi::connect()
 {
-    if (_client->connect(HACKADAYIO_API_HOST, HACKADAYIO_API_PORT))
+    if (!_client->connect(HACKADAYIO_API_HOST, HACKADAYIO_API_PORT))
     {
         return API_Error_NoConnection;
     }
@@ -127,7 +127,7 @@ HackadayioApi::API_Error HackadayioApi::fetchURL(const char *request)
 #if (HACKADAYIO_DEBUG == 1)
         Serial.printf("%s:%d connect %d\n", __FUNCTION__, __LINE__, response);
 #endif
-        if (!response)
+        if (response)
             return response;
     }
 
