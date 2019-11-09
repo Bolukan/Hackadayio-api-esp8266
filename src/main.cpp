@@ -12,9 +12,8 @@
 #include <ESP8266WiFi.h>      // Arduino library - https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFi.h
 #include <WiFiClientSecure.h> // Arduino library - https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/WiFiClientSecure.h
 #include <time.h>             // Arduino library - Secure connections need the right time to know validity of certificate.
+#include "secrets.h" // Uncomment this line and add secrets.h to your project
 
-#include "ca_certificate.h"
-// #include "secrets.h" // Uncomment this line and add secrets.h to your project
 #ifndef SECRETS_H
 #define SECRETS_H
 const char WIFI_SSID2[] = "ssid";
@@ -76,7 +75,7 @@ void onSTAGotIP(WiFiEventStationModeGotIP e /*IPAddress ip, IPAddress mask, IPAd
 void setup()
 {
   Serial.begin(115200);
-  Serial.println();
+  Serial.println("\nHackaday.io api for esp8266");
 
   // WiFi
   static WiFiEventHandler e1, e2, e4;
@@ -113,6 +112,8 @@ void loop()
     minutes_startloop = timeinfo.tm_hour;
 
     BearSSL::WiFiClientSecure client;
+    static BearSSL::X509List cert(DIGICERTGLOBALROOTCA);
+    client.setTrustAnchors(&cert);
     HackadayioApi api(client, HACKADAYIO_API_KEY);
     HackadayioApi::HProject hproject = api.GetProject(163680);
     if (!hproject.api_error)

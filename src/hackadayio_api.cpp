@@ -3,11 +3,9 @@
 /*!
  *  @brief  Instantiates a Hackaday API class
  */
-HackadayioApi::HackadayioApi(BearSSL::WiFiClientSecure &client, const char *API_key)
+HackadayioApi::HackadayioApi(Client &client, const char *API_key)
     : _client(&client), _apikey(API_key)
 {
-    static BearSSL::X509List cert(CERTIFICATE_ROOT);
-    _client->setTrustAnchors(&cert);
 }
 
 /*!
