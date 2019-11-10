@@ -4,7 +4,7 @@
 
 #define COMPDATE __DATE__ __TIME__
 #define APPNAME "Hackaday.io api for esp8266"
-#define VERSION "V0.0.2"
+#define VERSION "V0.1.0"
 #define WIFI_DEBUG 0
 
 #include <Arduino.h>
@@ -12,8 +12,8 @@
 #include <ESP8266WiFi.h>      // Arduino library - https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFi.h
 #include <WiFiClientSecure.h> // Arduino library - https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/WiFiClientSecure.h
 #include <time.h>             // Arduino library - Secure connections need the right time to know validity of certificate.
-#include "secrets.h" // Uncomment this line and add secrets.h to your project
 
+// #include "secrets.h" // Put next block in a file with your credentials, uncomment this line
 #ifndef SECRETS_H
 #define SECRETS_H
 const char WIFI_SSID[] = "ssid";
