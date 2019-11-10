@@ -16,8 +16,8 @@
 
 #ifndef SECRETS_H
 #define SECRETS_H
-const char WIFI_SSID2[] = "ssid";
-const char WIFI_PASSWORD2[] = "password";
+const char WIFI_SSID[] = "ssid";
+const char WIFI_PASSWORD[] = "password";
 const char HACKADAYIO_API_KEY[] = "1234567890123456";
 #endif
 
@@ -88,7 +88,7 @@ void setup()
   WiFi.setAutoConnect(false);  // do not automatically connect on power on to the last used access point
   WiFi.setAutoReconnect(true); // attempt to reconnect to an access point in case it is disconnected
   WiFi.persistent(false);      // Store no SSID/PASSWORD in flash
-  WiFi.begin(WIFI_SSID2, WIFI_PASSWORD2);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   // timezone CET = 3600, daylight CET->CEST = 3600
   // void configTime(int timezone, int daylightOffset_sec, const char* server1, const char* server2, const char* server3)
