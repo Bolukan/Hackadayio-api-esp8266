@@ -1,11 +1,17 @@
 #include <hackadayio_api.h>
 
+#if (HACKADAYIO_DEBUG == 1)
+#define DEBUG_PRINTF(...) { Serial.print(__LINE__); Serial.print(":"); Serial.print(__FUNCTION__); Serial.print(": "); Serial.printf(__VA_ARGS__); }
+#else
+#define DEBUG_PRINTF(...)
+#endif
 /*!
  *  @brief  Instantiates a Hackaday API class
  */
 HackadayioApi::HackadayioApi(Client &client, const char *API_key)
     : _client(&client), _apikey(API_key)
 {
+    _client->setTimeout(CLIENT_TIMEOUT);
 }
 
 /*!
@@ -15,9 +21,7 @@ HackadayioApi::HackadayioApi(Client &client, const char *API_key)
  */
 HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
 {
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d projectid %d\n", __FUNCTION__, __LINE__, projectid);
-#endif
+DEBUG_PRINTF("projectid = %d\n", projectid);
 
     HProject hproject;
     hproject.api_error = API_Error_Empty;
@@ -27,37 +31,27 @@ HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
 
     // do fetch
     API_Error response = fetchURL(request);
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d fetchurl returned: %d\n", __FUNCTION__, __LINE__, response);
-#endif
-
     if (response)
     {
+DEBUG_PRINTF("response error = %d\n", response);
         _client->stop();
         hproject.api_error = response;
         return hproject;
     }
 
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d peek\n", __FUNCTION__, __LINE__);
-#endif
     if (_client->peek() != '{')
     {
         hproject.api_error = API_Error_NoJSON;
+DEBUG_PRINTF("response error = %d\n", hproject.api_error);
         return hproject;
     }
 
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d JSON\n", __FUNCTION__, __LINE__);
-#endif
     // json
     const size_t capacity = JSON_ARRAY_SIZE(5) + JSON_OBJECT_SIZE(19) + MAX_SIZE_RETURN_JSON;
     DynamicJsonDocument doc(capacity);
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d JSON doc capacity: %d\n", __FUNCTION__, __LINE__, capacity);
-#endif
-    DeserializationError error = deserializeJson(doc, *_client);
+DEBUG_PRINTF("JSON doc capacity: %d\n", capacity);
 
+    DeserializationError error = deserializeJson(doc, *_client);
     if (!error)
     {
         hproject.api_error = API_Error_None;
@@ -81,7 +75,8 @@ HackadayioApi::HProject HackadayioApi::GetProject(int projectid)
         hproject.updated = doc["updated"].as<time_t>();
         hproject.tags_count = doc["tags"].size();
     }
-    _client->stop();
+
+    response = close();
     return hproject;
 }
 
@@ -111,41 +106,37 @@ HackadayioApi::API_Error HackadayioApi::close()
 
 HackadayioApi::API_Error HackadayioApi::fetchURL(const char *request)
 {
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d request %s\n", __FUNCTION__, __LINE__, request);
-#endif
+DEBUG_PRINTF("request %s\n", request);
     uint32_t contentLength = 0;
-
     API_Error response;
 
     // connect with https
     if (!_client->connected())
     {
         response = connect();
-#if (HACKADAYIO_DEBUG == 1)
-        Serial.printf("%s:%d connect %d\n", __FUNCTION__, __LINE__, response);
-#endif
         if (response)
+        {
+DEBUG_PRINTF("connect error = %d\n", response);
             return response;
+        }
     }
 
     // request
-    _client->setTimeout(4000);
-    _client->printf("GET %s HTTP/1.1\nHost: %s\nCache-Control: no-cache\n\n", request, HACKADAYIO_API_HOST);
+    _client->print(F("GET "));
+    _client->print(request);
+    _client->print(F(" HTTP/1.1\nHost: "));
+    _client->print(HACKADAYIO_API_HOST);
+    _client->print(F("\nCache-Control: no-cache\n\n"));
 
     while (_client->available())
     {
         String headerline = _client->readStringUntil('\n');
-#if (HACKADAYIO_DEBUG == 1)
-        Serial.printf("%s:%d headerline %s\n", __FUNCTION__, __LINE__, headerline.c_str());
-#endif
+DEBUG_PRINTF("headerline %s\n", headerline.c_str());
         if (headerline.indexOf("Content-Length") > -1)
         {
             // Content-Length
             contentLength = headerline.substring(16, headerline.length() - 1).toInt();
-#if (HACKADAYIO_DEBUG == 1)
-            Serial.printf("%s:%d contentLength %d\n", __FUNCTION__, __LINE__, contentLength);
-#endif
+DEBUG_PRINTF("contentLength %d\n", contentLength);
             if (contentLength > MAX_SIZE_RETURN_JSON)
             {
                 return API_Error_ResponseToLong;
@@ -156,8 +147,6 @@ HackadayioApi::API_Error HackadayioApi::fetchURL(const char *request)
             return API_Error_None;
         }
     }
-#if (HACKADAYIO_DEBUG == 1)
-    Serial.printf("%s:%d API_Error_NoResponse\n", __FUNCTION__, __LINE__);
-#endif
+DEBUG_PRINTF("Error %d\n", API_Error_NoResponse);
     return API_Error_NoResponse;
 }

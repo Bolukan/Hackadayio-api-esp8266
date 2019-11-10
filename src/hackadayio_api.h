@@ -42,7 +42,7 @@ CAUw7C29C79Fv1C5qfPrmAESrciIxpg0X40KPMbp1ZWVbd4=
 #define HACKADAYIO_API_HOST "api.hackaday.io"
 #define HACKADAYIO_API_PORT 443
 #define HACKADAYIO_PROJECTS_ID "/v1/projects/%d?api_key=%s"
-
+#define CLIENT_TIMEOUT 2000
 #define HACKADAYIO_DEBUG 1
 
 /*!
@@ -94,21 +94,20 @@ public:
     /*!
    *  @brief  Instantiate a Hackaday API class
    */
-    HackadayioApi(Client &client, const char* API_key);
+    HackadayioApi(Client &client, const char *API_key);
 
     HProject GetProject(int projectid);
 
 private:
-    Client* _client;
-    const char* _apikey;
+    Client *_client;
+    const char *_apikey;
 
     /*!
      * Connect to host
      */
     API_Error connect();
     API_Error close();
-    API_Error fetchURL(const char* request);
-
+    API_Error fetchURL(const char *request);
 };
 
 #endif
